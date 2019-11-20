@@ -1381,3 +1381,73 @@ return response.json();
 
 practice api :
 https://jsonplaceholder.typicode.com/
+
+## 9 Async / Await
+
+### 9.1 Async Await
+
+Async/await는 두 Promise의 없데이트다
+
+then, then, then, then은 별로다. 이것들은 코드를 좋지 않게 보이게 한다.
+Async/await는 기본적으로 Promise를 사용하는 코드를 더 좋게 보이게 하는 문법이다.
+
+> 먼저, await는 혼자서는 사용할 수 없다<br/>
+> await는 항상 async function안에서만 사용할 수 있다.<br/>
+> await는 기본적으로 Promise가 끝나길 기다린다
+
+**.then / .catch를 사용한 경우**
+
+```JS index.js
+const getMoviesAsync = () => {
+  fetch("https://yts.lt/api/v2/list_movies.json")
+  .then(response => {
+  console.log(response);
+  return response.json();
+})
+  .then(json => console.log(json))
+  .catch(e => console.log(`XXX ${e}`));
+}; // Promise one
+```
+
+**async / await를 사용한 경우**
+
+```JS index.js
+// 기본 형식으로의 표현
+// async function getMovies() {
+
+// }
+
+const getMoviesAsync = async () => {
+  const response = await fetch("https://yts.lt/api/v2/list_movies.json");
+  const json = await response.json();
+  console.log(json);
+}; //async one
+
+getMoviesAsync();
+```
+
+> 6 Reasons Why JavaScript Async/Await Blows Promises Away (Tutorial) <br/> https://hackernoon.com/6-reasons-why-javascripts-async-await-blows-promises-away-tutorial-c7ec10518dd9
+
+### 9.3 Parallel Async Await
+
+```JS index.js
+const getMoviesAsync = async () => {
+  try {
+    const [moviesResponse, suggestionsResponse] = await Promise.all([
+      fetch("https://yts.lt/api/v2/list_movies.json"),
+      fetch("https://yts.lt/api/v2/movie_suggestions.json")
+    ]);
+    const [movies, suggestions] = await Promise.all([
+      moviesResponse.json(),
+      suggestionsResponse.json()
+    ]);
+    console.log(movies, upcoming);
+  } catch (error) {
+    console.log(`XXX! ${error}`);
+  } finally {
+    console.log("We are done!");
+  }
+};
+
+getMoviesAsync();
+```
