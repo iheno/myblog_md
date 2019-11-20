@@ -1207,3 +1207,177 @@ amIsexy
   console.log(otherNumber * 2);
 });
 ```
+
+**Array function으로 간단하게**
+
+```JS index.js
+const amIsexy = new Promise((resolve, reject) => {
+  resolve(2);
+});
+
+amIsexy
+.then(number => number * 2)
+.then(number => number * 2)
+.then(number => number * 2)
+.then(number => number * 2)
+.then(number => number * 2);
+```
+
+**Function을 추가하여 정리**
+
+```JS index.js
+const amIsexy = new Promise((resolve, reject) => {
+resolve(2);
+});
+
+const timeTwo = number => number * 2;
+
+amIsexy
+.then(timeTwo)
+.then(timeTwo)
+.then(timeTwo)
+.then(timeTwo)
+.then(timeTwo)
+.then(lastNumber => console.log(lastNumber));
+```
+
+**여기서 하나의 then이 에러를 발생시키면 어떻게 될까 ?**
+
+```JS index.js
+  const amIsexy = new Promise((resolve, reject) => {
+resolve(2);
+});
+
+const timeTwo = number => number * 2;
+
+amIsexy
+.then(timeTwo)
+.then(timeTwo)
+.then(timeTwo)
+.then(timeTwo)
+.then(timeTwo)
+.then(() => {
+  throw Error("Something is wrong");
+})
+.then(lastNumber => console.log(lastNumber))
+.catch(error => console.log(error));
+```
+
+### 8.5 Promise.all
+
+Promise.all은 주어진 모든 Promise를 싱행한 후 진행되는 하나의(마지막) Promise를 반환한다.
+
+```JS index.js
+//하나의 API가 아닌 3개, 4개의 API에서 값을 불러와야 할 때
+const p1 = new Promise(resolve => {
+  setTimeout(resolve, 5000, "first");
+});
+
+const p2 = new Promise(resolve => {
+  setTimeout(resolve, 1000, "second");
+});
+
+const p3 = new Promise(resolve => {
+  setTimeout(resolve, 3000, "third");
+});
+
+const allPromise = Promise.all([p1, p2, p3]);
+
+allPromise.then(value => console.log(value));
+```
+
+**resolve를 하는 대신 Reject가 되게 바꿔보자**
+
+```JS index.js
+//하나가 reject되면 전체가 reject된다.
+const p1 = new Promise(resolve => {
+  setTimeout(resolve, 5000, "first");
+});
+
+const p2 = new Promise((resolve, reject) => {
+  setTimeout(reject, 1000, "I love JS");
+});
+
+const p3 = new Promise(resolve => {
+  setTimeout(resolve, 3000, "third");
+});
+
+const allPromise = Promise.all([p1, p2, p3]);
+
+allPromise.then(value => console.log(value)).catch(err => console.log(err));
+```
+
+### 8.6 Promise.race
+
+Promise.all과 다르게 어느것이 먼저 되는지 상관없이 가장 빠른걸 반환한다.
+
+```JS index.js
+const p1 = new Promise(resolve => {
+  setTimeout(resolve, 5000, "first");
+});
+
+const p2 = new Promise((resolve, reject) => {
+  setTimeout(reject, 5000, "I love JS");
+});
+
+const p3 = new Promise(resolve => {
+  setTimeout(resolve, 3000, "third");
+});
+
+const allPromise = Promise.race([p1, p2, p3]);
+
+allPromise.then(value => console.log(value)).catch(err => console.log(err));
+```
+
+**좀더 간결한 코드**
+
+```JS index.js
+const p1 = new Promise(resolve => {
+  setTimeout(resolve, 5000, "first");
+});
+
+const p2 = new Promise((resolve, reject) => {
+  setTimeout(reject, 5000, "I love JS");
+});
+
+const p3 = new Promise(resolve => {
+  setTimeout(resolve, 3000, "third");
+});
+
+Promise.race([p1, p2, p3])
+
+  .then(value => console.log(value))
+  .catch(err => console.log(err));
+```
+
+### 8.7 .finally
+
+finalize하는데 성공하든지 실패하든지 결과에 상관없이 반환한다
+finall는 보통…API를 호출할 때 쓴다. 로딩할 때, 하나를 얻고 두개를 얻고 세개를 얻고
+마지막으로 데이터를 보여주거나, 로딩을 멈추거나 뭔가를 하거나 할때.
+
+```JS index.js
+const p1 = new Promise((resolve, reject) => {
+  setTimeout(reject, 5000, "first");
+})
+  .then(value => console.log(value))
+  .catch(e => console.log(`${e} X`))
+  .finally(() => console.log("Im done"));
+```
+
+### 8.8 Real world Promises
+
+Promise를 return하는 fetch (fetch는 Promise를 return한다 )
+
+```JS index.js
+fetch("https://yts.lt/api/v2/list_movies.json")
+.then(response => {
+console.log(response);
+return response.json();
+})
+.then(json => console.log(json))
+.catch(err => console.log(`${err} XXX`));
+```
+
+practice api :
+https://jsonplaceholder.typicode.com/
