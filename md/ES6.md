@@ -1656,7 +1656,8 @@ HTML:
 
 JS:
 eventLister를 target에 add할 때 이 event의 handler는 this를 event target에 가르키게 한다.
--> ***this가 class를 가르키지 않는다 X***
+-> **_this가 class를 가르키지 않는다 X_**
+
 ```JS app.js
 class Counter {
   constructor({ initialNumber = 0, counterID, plusID, minusID }) {
@@ -1691,8 +1692,9 @@ new Counter({
 });
 ```
 
--> ***해결방법***
+-> **_해결방법_**
 Array Function으로 변환
+
 ```JS app.js
 class Counter {
   constructor({ initialNumber = 0, counterID, plusID, minusID }) {
@@ -1725,4 +1727,42 @@ new Counter({
   plusID: "add",
   minusID: "minus"
 });
-  ```
+```
+
+## 11 Set and Map
+
+### 11.1 Sets
+
+set을 사용하면 어떤 타입의 고유한 value든 저장할 수 있게 해준다.
+
+```JS index.js
+const sexySet = new Set([1, 2, 3, 4, 5, 6, 7, 7, 7, 7, 8]);
+// 중복된 값을 유니크 value로 저장
+console.log(sexySet);
+```
+
+사용 예:
+
+```JS index.js
+const sexySet = new Set([1, 2, 3, 4, 5, 6, 7, 7, 7, 7, 8]);
+
+sexySet.has(1);
+sexySet.delete(2);
+sexySet.clear();
+sexySet.add("hi there!");
+sexySet.add([1, 2, 3]);
+console.log(sexySet);
+// console.log(sexySet.size);
+```
+
+### 11.2 Map
+
+map에서는 key value를 가지고 있다.
+
+```JS index.js
+const map = new Map();
+map.set("age", 18);
+map.has("age"); //true
+map.get("age"); // 18
+console.log(map);
+```
