@@ -1451,3 +1451,278 @@ const getMoviesAsync = async () => {
 
 getMoviesAsync();
 ```
+
+## 10 Classes
+
+### 10.1 Introduction to Classes
+
+Class 는 기본적으로 청사진이다. (단지 화려한 object다)
+
+**Class는 constructor(생성자)를 안에 가지고있다.**
+
+sample1:
+
+```JS index.js
+class User {
+  constructor() {
+    this.username = "Heno";
+  }
+  // make functions
+  sayHello() {
+    console.log("hello");
+    }
+} // this is blueprint
+
+const sexyUser = new User(); // this is alive
+
+console.log(sexyUser.username);
+
+setTimeout(sexyUser.sayHello, 4000);
+```
+
+sample2:
+
+```JS index.js
+class User {
+  constructor(name) {
+    this.username = name;
+  }
+  sayHello() {
+    console.log(`hello, my name is ${this.username}`);
+  }
+}
+
+const sexyUser = new User("Heno");
+
+sexyUser.sayHello();
+```
+
+### 10.2 Extending Classes
+
+‘this’는 기본적으로 클래스 안에서 볼 수 있고, 클래스 그 자체를 가리킨다.
+(언제든 추가하고 싶거나 클래스로부터 어떤것을 불러오고 샆을때 ’this’를 사용 할거다)
+
+```JS index.js
+class User {
+  constructor(name, lastName, email, password) {
+  // make properties
+  this.username = name;
+  this.lastName = lastName;
+  this.email = email;
+  this.password = password;
+  }
+  sayHello() {
+    console.log(`hello, my name is ${this.username}`);
+  }
+  getProfile() {
+    console.log(`${this.username} ${this.email} ${this.password}`);
+  }
+  updatePassword(newPassword, currentPassword) {
+  // 이전 password가 맞다면 new password로 바꿀수 있게 해주기
+  if (currentPassword === this.password) {
+    this.password = newPassword;
+    } else {
+      console.log("Can't change!");
+    }
+  }
+}
+
+const sexyUser = new User("Heno", "jung", "henjiwu@gmail.com", "1234");
+
+sexyUser.sayHello();
+sexyUser.getProfile();
+console.log(sexyUser.password);
+sexyUser.updatePassword("4321", "1234");
+console.log(sexyUser.password);
+```
+
+**Extend class**
+
+```JS index.js
+class User {
+  constructor(name, lastName, email, password) {
+    this.username = name;
+    this.lastName = lastName;
+    this.email = email;
+    this.password = password;
+  }
+  sayHello() {
+    console.log(`hello, my name is ${this.username}`);
+  }
+  getProfile() {
+    console.log(`${this.username} ${this.email} ${this.password}`);
+  }
+  updatePassword(newPassword, currentPassword) {
+    if (currentPassword === this.password) {
+      this.password = newPassword;
+    } else {
+      console.log("Can't change!");
+    }
+  }
+}
+
+const sexyUser = new User("Heno", "jung", "henjiwu@gmail.com", "1234");
+sexyUser.sayHello();
+
+class Admin extends User {
+  deletWebsite() {
+    console.log("Dewleting the hole Website");
+  }
+}
+
+const sexyAdmin = new Admin("Heno", "jung", "henjiwu@gmail.com", "1234");
+
+sexyAdmin.deletWebsite();
+
+console.log(sexyAdmin.email);
+```
+
+### 10.3 super
+
+**_super() 는 호출한다. constructor의 base클래스를..._**
+
+```JS index.js
+class User {
+  constructor({ username, lastName, email, password }) {
+    this.username = username;
+    this.lastName = lastName;
+    this.email = email;
+    this.password = password;
+  }
+  getProfile() {
+    console.log(`${this.username} ${this.email} ${this.password}`);
+  }
+  updatePassword(newPassword, currentPassword) {
+    if (currentPassword === this.password) {
+      this.password = newPassword;
+    } else {
+      console.log("Can't change!");
+    }
+  }
+}
+
+// 만약 여러 argument를 가지고 있다면 options오브젝트로 하는게 더 좋다. 왜냐하면 어떤값을 넘겨주는지 보기위해
+const sexyUser = new User({
+  username: "Heno",
+  lastName: "jung",
+  email: "henjiwu@gmail.com",
+  password: "1234"
+});
+
+class Admin extends User {
+  constructor({ username, lastName, email, password, superAdmin, isActive }) {
+    super({ username, lastName, email, password });
+    this.superAdmin = superAdmin;
+    this.isActive = isActive;
+  }
+  deletWebsite() {
+    console.log("Dewleting the hole Website");
+  }
+}
+
+const admin = new Admin({
+  username: "Heno",
+  lastName: "jung",
+  email: "henjiwu@gmail.com",
+  password: "1234",
+  superAdmin: true,
+  isActive: true
+});
+
+console.log(sexyUser.email);
+console.log(admin.lastName);
+```
+
+**Sample**
+
+HTML:
+
+```Html index.html
+<!DOCTYPE html>
+<html>
+  <head>
+    <title></title>
+    <meta charset="UTF-8" />
+  </head>
+
+  <body>
+    <span id="count"></span>
+    <button id="add">+</button>
+    <button id="minus">-</button>
+    <script src="src/app.js"></script>
+  </body>
+</html>
+```
+
+JS:
+eventLister를 target에 add할 때 이 event의 handler는 this를 event target에 가르키게 한다.
+-> ***this가 class를 가르키지 않는다 X***
+```JS app.js
+class Counter {
+  constructor({ initialNumber = 0, counterID, plusID, minusID }) {
+    this.count = initialNumber;
+    this.counter = document.getElementById(counterID);
+    this.counter.innerHTML = initialNumber;
+    this.plusBtn = document.getElementById(plusID);
+    this.minusBtn = document.getElementById(minusID);
+    this.addEventListeners();
+  }
+  addEventListeners() {
+    this.plusBtn.addEventListener("click", this.increase);
+    this.minusBtn.addEventListener("click", this.decrease);
+  }
+  increase() {
+    this.count = this.count + 1;
+    this.repaintCount();
+  }
+  decrease() {
+    this.count = this.count - 1;
+    this.repaintCount();
+  }
+  repaintCount() {
+    this.counter.innerText = this.count;
+  }
+}
+
+new Counter({
+  counterID: "count",
+  plusID: "add",
+  minusID: "minus"
+});
+```
+
+-> ***해결방법***
+Array Function으로 변환
+```JS app.js
+class Counter {
+  constructor({ initialNumber = 0, counterID, plusID, minusID }) {
+    this.count = initialNumber;
+    this.counter = document.getElementById(counterID);
+    this.counter.innerText = initialNumber;
+    this.plusBtn = document.getElementById(plusID);
+    this.minusBtn = document.getElementById(minusID);
+    this.addEventListeners();
+  }
+  addEventListeners = () => {
+    this.plusBtn.addEventListener("click", this.increase);
+    this.minusBtn.addEventListener("click", this.decrease);
+  };
+  increase = () => {
+    this.count = this.count + 1;
+    this.repaintCount();
+  };
+  decrease = () => {
+    this.count = this.count - 1;
+    this.repaintCount();
+  };
+  repaintCount = () => {
+    this.counter.innerText = this.count;
+  };
+}
+
+new Counter({
+  counterID: "count",
+  plusID: "add",
+  minusID: "minus"
+});
+  ```
