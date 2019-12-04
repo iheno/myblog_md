@@ -334,3 +334,155 @@ const kim = new PersonPlus("kim", 10, 20);
 console.log(kim.sum());
 console.log(kim.avg());
 ```
+
+## super
+
+`부모 클래스에게 일을 시키고 부모가 하지 못하는 일은 나만 하도록 하는 키워드가 super 다.`
+</br>
+**_super( ) 에서 ( ) 안에는 부모 클래스에서의 생성자를 넣는다._**
+
+```JS index.js
+class Person {
+  constructor(name, first, second) {
+  this.name = name;
+  this.first = first;
+  this.second = second;
+  }
+  sum() {
+  return this.first + this.second;
+  }
+}
+
+class PersonPlus extends Person {
+  constructor(name, first, second, third) {
+  super(name, first, second);
+  this.third = third;
+  }
+    sum() {
+    return super.sum() + this.third;
+  }
+    avg() {
+    return (this.first + this.second + this.third) / 3;
+  }
+}
+
+const kim = new PersonPlus("kim", 10, 20, 30);
+console.log(kim.sum()); // 60
+console.log(kim.avg()); // 20
+```
+
+## 객체간의 상속
+
+`1.proptotype(__proto__)을 이용해서 상속을 구현`
+
+```JS index.js
+const superObj = { superVal: "super" };
+const subObj = { subVal: "sub" };
+subObj.__proto__ = superObj; //subObj 가 superObj의 자식이다.
+
+console.log(subObj.subVal);
+console.log(subObj.superVal);
+
+subObj.superVal = "sub";
+console.log(superObj.superVal);
+
+// sub super super
+```
+
+`2.Object.create를 이용해서 __proto__를 대체하는 방법`
+
+```JS index.js
+const superObj = { superVal: "super" };
+
+const subObj = Object.create(superObj);
+subObj.subVal = "sub";
+debugger;
+
+console.log(subObj.subVal); //sub
+console.log(subObj.superVal); //super
+subObj.superVal = "sub";
+console.log(superObj.superVal); //super
+```
+
+`예제)`
+
+```JS index.js
+const superObj = { superVal: "super" };
+
+const subObj = Object.create(superObj);
+subObj.subVal = "sub";
+debugger;
+
+console.log(subObj.subVal); //sub
+console.log(subObj.superVal); //super
+subObj.superVal = "sub";
+console.log(superObj.superVal); //super
+
+const kim = {
+  name: "kim",
+  first: 10,
+  second: 20,
+  sum: function() {
+  return this.first + this.second;
+  }
+};
+
+// const lee = {
+// name: "lee",
+// first: 10,
+// second: 10,
+// avg: function() {
+// return (this.first + this.second) / 2;
+// }
+// };
+
+// lee.__proto__ = kim;
+
+const lee = Object.create(kim);
+  lee.name = "lee";
+  lee.first = 10;
+  lee.second = 10;
+  lee.avg = function() {
+  return (this.first + this.second) / 2;
+};
+
+console.log(lee.sum());
+console.log(lee.avg());
+```
+
+## 객체와 함수
+
+`자바스크립트는에서 함수는 혼자 있으면 개인이고, new가 앞에 있으면 객체를 만드는 신이고, call을 뒤에 붙이면 용병이고, bind를 붙이면 분신술을 부리는 놀라운 존재입니다.`<br/>
+
+### 1. call을 통해서 실행할 때마다 this의 값을 변경하는 방법
+
+```JS index.js
+const kim = { name: "kim", first: 10, second: 20 };
+const lee = { name: "lee", first: 10, second: 10 };
+
+function sum(prefix) {
+return prefix + (this.first + this.second);
+}
+
+// sum();
+console.log(sum.call(kim, "=>")); // =>30
+console.log(sum.call(lee, ":")); // :20
+```
+
+### 2. bind를 통해서 독립적이면서도 특정 객체의 메소드 역할을 할 수 있는 함수 만들기
+
+```JS index.js
+const kim = { name: "kim", first: 10, second: 20 };
+const lee = { name: "lee", first: 10, second: 10 };
+
+function sum(item) {
+return item + (this.first + this.second);
+}
+
+// sum();
+console.log(sum.call(kim, "=>"));
+console.log(sum.call(lee, ":"));
+
+const kimSum = sum.bind(kim, "->");
+console.log(kimSum()); // ->30
+```
